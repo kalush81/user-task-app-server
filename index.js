@@ -1,12 +1,14 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+require('dotenv').config();
 
-const app =  express()
+const app =  express();
 app.use(bodyParser.json());
 
 const Sequelize = require("sequelize");
+const password = process.env.DBPASSWORD;
 const sequelize = new Sequelize(
-  "postgres://postgres:secret@localhost:5432/postgres"
+  `postgres://postgres:${password}@localhost:5432/postgres`
 );
 
 const User = sequelize.define("user", {
@@ -40,7 +42,7 @@ sequelize
   });
 
 app.post('/echo', (req, res) => {
-    res.json(req.body)
+    res.json(req.body);
 }) 
 // Create a new user account
 const isRegister = (req, res, next) => {
@@ -53,12 +55,12 @@ const isRegister = (req, res, next) => {
             res.send({msg: 'this email is registered'})
             return next('this email exist');
         } 
-        next()
+        next();
     })
-}
+};
 app.post('/users', isRegister, (req, res, next) => {
     User.create(req.body)
         .then(user => res.json(user))
-        .catch(err => next(err))
-}) 
-app.listen(4000, console.log('server listen on 4000'))
+        .catch(err => next(err));
+}) ;
+app.listen(4000, console.log('server listen on 4000'));
