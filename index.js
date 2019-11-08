@@ -62,5 +62,15 @@ app.post('/users', isRegister, (req, res, next) => {
     User.create(req.body)
         .then(user => res.json(user))
         .catch(err => next(err));
-}) ;
+});
+//get user by Id
+app.get('/users/:userId', (req, res, next) => {
+    const id = req.params.userId;
+    User.findByPk(id)
+        .then(user => {
+            if (user) return res.status(200).json(user)
+            res.status(404).send({msg: `user with id:${id} doesn't exist`})
+        })
+        .catch(err => next(err))
+})
 app.listen(4000, console.log('server listen on 4000'));
